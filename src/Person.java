@@ -1,18 +1,8 @@
-public class Person {
-    private static int counter = 0;
-    private int id;
+public class Person extends Record {
     private String firstname;
     private String lastname;
     private String phone;
-
-    public Person () {
-        counter++;
-        id = counter;
-    }
-
-    public int getId() {
-        return id;
-    }
+    private String email;
 
     public String getFirstname() {
         return firstname;
@@ -38,13 +28,40 @@ public class Person {
         this.phone = phone;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", phone='" + phone + '\'' +
+                ", e-mail='" + email + '\'' +
                 '}';
+    }
+
+    @Override
+    public void askUserData() {
+        String firstname = Main.askString("First Name: ");
+        String lastname = Main.askString("Last Name: ");
+        String phone = Main.askString("Phone Number: ");
+        String email = Main.askString("E-mail: ");
+
+        setFirstname(firstname);
+        setLastname(lastname);
+        setPhone(phone);
+        setEmail(email);
+    }
+
+    @Override
+    public boolean contains(String part) {
+        return false;
     }
 }
