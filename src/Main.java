@@ -65,6 +65,9 @@ public class Main {
         for (; ; ) {
             String create = askString("Create ");
             switch (create.toLowerCase()) {
+                case "alarm":
+                    addRecord(new Alarm());
+                    return;
                 case "person":
                     addRecord(new Person());
                     return;
