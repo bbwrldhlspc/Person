@@ -22,7 +22,7 @@ public class Alarm extends Note {
     }
 
     @Override
-    public void askTime() {
+    public void askUserData() {
         String time = Main.askString("What time should alarm go off? ");
         setTime(time);
     }
