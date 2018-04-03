@@ -1,3 +1,4 @@
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -27,6 +28,9 @@ public class Main {
                     break;
                 case "list":
                     printList(personArrayList);
+                    break;
+                case "expired":
+                    findExpired();
                     break;
                 default:
                     System.out.println("Unknown command");
@@ -76,9 +80,24 @@ public class Main {
                     return;
                 case "exit":
                     return;
+                case "reminder":
+                    addRecord(new Reminder());
+                    return;
                 default:
                     System.out.println("Unknown type");
 
+            }
+        }
+    }
+
+    private static void findExpired() {
+        LocalTime now = LocalTime.now();
+        for (Record r : personArrayList) {
+            if (r instanceof Alarm){
+                Alarm a = (Alarm) r;
+                if (a.getTime().isBefore(now)){
+                    System.out.println(a);
+                }
             }
         }
     }
