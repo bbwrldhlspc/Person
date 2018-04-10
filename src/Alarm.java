@@ -1,13 +1,6 @@
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
-/**
- * Created by bbwrldhlspc on 4/3/2018.
- */
-public class Alarm extends Note {
-    public static final String TIME_FORMAT="HH:mm";
-    public static final DateTimeFormatter TIME_FORMATTER
-                            = DateTimeFormatter.ofPattern(TIME_FORMAT);
+public class Alarm extends Note implements Expirable {
     private LocalTime time;
 
     public LocalTime getTime() {
@@ -30,15 +23,20 @@ public class Alarm extends Note {
     @Override
     public void askUserData() {
         super.askUserData();
-        String strTime = Main.askString("What time? (" + TIME_FORMAT + "): ");
-        LocalTime time = LocalTime.parse(strTime, TIME_FORMATTER);
+        LocalTime time = Main.askTime("Enter time: ");
         setTime(time);
     }
 
     @Override
     public boolean contains(String part) {
-        String strTime = TIME_FORMATTER.format(time);
+        String strTime = Main.TIME_FORMATTER.format(time);
         return super.contains(part)
                 || strTime.contains(part);
+    }
+
+    @Override
+    public boolean isExpired() {
+        LocalTime now = LocalTime.now();
+        return time.isBefore(now);
     }
 }

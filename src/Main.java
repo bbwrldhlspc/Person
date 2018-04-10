@@ -1,10 +1,22 @@
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class Main {
+    public static final String TIME_FORMAT = "HH:mm";
+    public static final DateTimeFormatter TIME_FORMATTER
+            = DateTimeFormatter.ofPattern(TIME_FORMAT);
+
+    public static final String DATE_FORMAT = "dd/MM/yyyy";
+    public static final DateTimeFormatter DATE_FORMATTER
+            = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
     static Scanner scanner = new Scanner(System.in);
-    static ArrayList<Record> personArrayList = new ArrayList<>();
+    static TreeMap<Integer, Record> recordsMap = new TreeMap<>();
 
     public static void main(String[] args) {
         commandLoop();
@@ -27,15 +39,25 @@ public class Main {
                     create();
                     break;
                 case "list":
-                    printList(personArrayList);
+                    printList(recordsMap);
                     break;
                 case "expired":
                     findExpired();
+                    break;
+                case "show":
+                    showById();
                     break;
                 default:
                     System.out.println("Unknown command");
             }
         }
+    }
+
+    private static void showById() {
+        String strId = askString("Enter ID of a record you are looking for: ");
+        int id = Integer.parseInt(strId);
+        Record r = recordsMap.get(id);
+        System.out.println(r);
     }
 
     private static void help() {
@@ -51,14 +73,14 @@ public class Main {
         System.out.println("");
     }
 
-    private static void printList(ArrayList<Record> personArrayList) {
-        for (Record p : personArrayList)
+    private static void printList(TreeMap<Integer, Record> recordsMap) {
+        for (Record p : recordsMap.values())
             System.out.println(p);
     }
 
     private static void find() {
         String part = askString("What are you looking for?");
-        for (Record r : personArrayList) {
+        for (Record r : recordsMap.values()) {
             if (r.contains(part)) {
                 System.out.println(r);
             }
@@ -85,18 +107,16 @@ public class Main {
                     return;
                 default:
                     System.out.println("Unknown type");
-
             }
         }
     }
 
     private static void findExpired() {
-        LocalTime now = LocalTime.now();
-        for (Record r : personArrayList) {
-            if (r instanceof Alarm){
-                Alarm a = (Alarm) r;
-                if (a.getTime().isBefore(now)){
-                    System.out.println(a);
+        for (Record r : recordsMap.values()) {
+            if (r instanceof Expirable) {
+                Expirable expirable = (Expirable) r;
+                if (expirable.isExpired()) {
+                    System.out.println(expirable);
                 }
             }
         }
@@ -104,7 +124,8 @@ public class Main {
 
     private static void addRecord(Record record) {
         record.askUserData();
-        personArrayList.add(record);
+        int id = record.getId();
+        recordsMap.put(id, record);
         System.out.println("Record Created!");
     }
 
@@ -122,5 +143,33 @@ public class Main {
             str = str.substring(1, str.length() - 1);
         }
         return str;
+    }
+
+    public static LocalTime askTime(String message) {
+        for (; ; ) {
+            String strTime = askString(message + "(" + TIME_FORMAT + ")");
+            try {
+                LocalTime time = LocalTime.parse(strTime, TIME_FORMATTER);
+                return time;
+            } catch (DateTimeParseException e) {
+                System.out.println("Time entered in wrong format");
+            }
+        }
+    }
+
+    public static LocalDate askDate(String message) {
+        LocalDate now = LocalDate.now();
+        for (; ; ) {
+            String strDate = askString(message + "(" + DATE_FORMAT + ")");
+            try {
+                LocalDate date = LocalDate.parse(strDate, DATE_FORMATTER);
+                if (date.isBefore(now)) {
+                    System.out.println("I can't remind you in a past");
+                } else
+                    return date;
+            } catch (DateTimeParseException e) {
+                System.out.println("Date entered in wrong format");
+            }
+        }
     }
 }
