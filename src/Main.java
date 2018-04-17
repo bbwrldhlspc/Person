@@ -1,5 +1,7 @@
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -47,8 +49,26 @@ public class Main {
                 case "show":
                     showById();
                     break;
+                case "birthdays":
+                    showBirthdays();
+                    return;
                 default:
                     System.out.println("Unknown command");
+            }
+        }
+    }
+
+    private static void showBirthdays() {
+        LocalDate now = LocalDate.now();
+        Month nowMonth = now.getMonth();
+        for (Record r : recordsMap.values()){
+            if (r instanceof RecordWithBirthday){
+                RecordWithBirthday rwb = (RecordWithBirthday) r;
+                LocalDate birthday = rwb.getBirthday();
+                Month birthdaMonth = birthday.getMonth();
+                if (nowMonth == birthdaMonth ){
+                    System.out.println(r);
+                }
             }
         }
     }
@@ -105,6 +125,9 @@ public class Main {
                 case "reminder":
                     addRecord(new Reminder());
                     return;
+                case "pet":
+                    addRecord(new Pet());
+                    return;
                 default:
                     System.out.println("Unknown type");
             }
@@ -158,14 +181,14 @@ public class Main {
     }
 
     public static LocalDate askDate(String message) {
-        LocalDate now = LocalDate.now();
+      //  LocalDate now = LocalDate.now();
         for (; ; ) {
             String strDate = askString(message + "(" + DATE_FORMAT + ")");
             try {
                 LocalDate date = LocalDate.parse(strDate, DATE_FORMATTER);
-                if (date.isBefore(now)) {
-                    System.out.println("I can't remind you in a past");
-                } else
+          //      if (date.isBefore(now)) {
+          //          System.out.println("I can't remind you in a past");
+         //       } else
                     return date;
             } catch (DateTimeParseException e) {
                 System.out.println("Date entered in wrong format");

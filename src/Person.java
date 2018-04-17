@@ -1,4 +1,6 @@
-public class Person extends Record {
+import java.time.LocalDate;
+
+public class Person extends RecordWithBirthday {
     private String firstname;
     private String lastname;
     private String phone;
@@ -42,6 +44,7 @@ public class Person extends Record {
                 "id=" + getId() +
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
+                ", birthday='" + Main.DATE_FORMATTER.format(birthday) + '\'' +
                 ", phone='" + phone + '\'' +
                 ", e-mail='" + email + '\'' +
                 '}';
@@ -51,9 +54,11 @@ public class Person extends Record {
     public void askUserData() {
         String firstname = Main.askString("First Name: ");
         String lastname = Main.askString("Last Name: ");
+        LocalDate birthday = Main.askDate("Birthday: ");
         String phone = Main.askString("Phone Number: ");
         String email = Main.askString("E-mail: ");
 
+        setBirthday(birthday);
         setFirstname(firstname);
         setLastname(lastname);
         setPhone(phone);
@@ -62,7 +67,8 @@ public class Person extends Record {
 
     @Override
     public boolean contains(String part) {
-        return firstname.contains(part)
+        return super.contains(part)
+                || firstname.contains(part)
                 || lastname.contains(part)
                 || phone.contains(part)
                 || email.contains(part);
